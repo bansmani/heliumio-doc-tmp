@@ -18,7 +18,7 @@ With helium, there are...
 * No Custom CRD's, No Operators to install, so no learning curve, it runs just like any other container.
 * No complicated yaml schema, very intuitive, enough to build CICD.
 * Single yaml pipline file promote simplicity and maintainability
-* Out of the box support for every kubernetes yaml tags.
+* Out of the box support for every kubernetes yaml tags, including volumes, secrets etc within the steps.
 * Pipeline can be kept along with your source git.
 * Out of the box support for git webhooks.
 * Promote reusability with simplicity.
