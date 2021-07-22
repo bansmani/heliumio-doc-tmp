@@ -1,0 +1,11 @@
+pipeline:
+  version: helium/v1alpha1
+  name: testpipeline
+
+  tasks:
+    - name: simple-task
+      steps:
+        - name: simple-step
+          image: alpine:latest
+          command: ["sh", "-c"]
+          args: ["cat /etc/os-release"]

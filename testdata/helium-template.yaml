@@ -1,0 +1,17 @@
+helium-template:
+  gradle-build:
+    image: adoptopenjdk:11-jdk-openj9
+    command: [ "sh", "-c" ]
+    args: ["cd /workspace/${sourceroot} && chmod a+x gradlew && ./gradlew clean build"]
+
+
+  docker-image-builder:
+    image: gcr.io/kaniko-project/executor:latest
+    args: [ "--dockerfile=/workspace/${sourceroot}/Dockerfile",
+            "--context=dir://${sourceroot}",
+            "--destination=kubernetes.docker.internal:5000/helium/${sourceroot}",
+            "--insecure", "--skip-tls-verify"]
+
+  helm-install:
+    image: heliumio/helm
+    args: [ "install", "${version}", "/workspace/${sourceroot}/helm" ]

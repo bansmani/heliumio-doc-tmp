@@ -1,0 +1,35 @@
+pipeline:
+  version: helium/v1alpha1
+  name: testpipeline
+
+  tasks:
+    - name: task1
+      steps:
+        - name: task1-step1
+          image: ubuntu:latest
+          command: ["/bin/bash", "-c"]
+          args: ["cat /etc/os-release"]
+          volumeMounts:
+            - name: foo
+              mountPath: "/etc/foo"
+              readOnly: true
+        - name: task1-step2
+          image: alpine:latest
+          command: ["sh", "-c"]
+          args: ["cat /etc/os-release"]
+      volumes:
+        - name: foo
+          secret:
+            secretName: mysecret
+
+    - name: task2
+      steps:
+        - name: task2-step1
+          image: ubuntu:latest
+          command: [ "/bin/bash", "-c" ]
+          args: [ "cat /etc/os-release" ]
+
+        - name: task2-step2
+          image: alpine:latest
+          command: [ "sh", "-c" ]
+          args: [ "cat /etc/os-release" ]

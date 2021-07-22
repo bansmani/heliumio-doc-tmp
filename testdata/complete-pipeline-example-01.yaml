@@ -1,0 +1,28 @@
+pipeline:
+  version: helium/v1alpha1
+  name: myapp
+
+  tasks:
+    - name: build-task
+
+      git:
+        - name: sample-app
+          clone: https://github.com/bansmani/gradle-springboot-sample-app
+
+      template: testdata/helium-template.yaml
+      vars:
+        - name: sourceroot
+          value: sample-app
+
+      steps:
+        - name: build-source
+          template: gradle-build
+
+        - name: build-image
+          template: docker-image-builder
+
+        - name: deploy-image
+          template: helm-install
+          vars:
+            - name: version
+              value: sample-app-dev
