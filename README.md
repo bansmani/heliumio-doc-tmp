@@ -59,7 +59,7 @@ When a `step` fails within a `task`, helium stops executing that complete `task`
 ##
 #### Git Clone example
 
-Helium support cloning multiple git repository 
+Helium support cloning multiple git repository
 
     tasks:  
       - name: simple-task  
@@ -73,16 +73,16 @@ Helium support cloning multiple git repository
             args: ["cd /workspace/my-app && chmod a+x gradlew && ./gradlew clean build"]
 
 
-We can pass all types of arguments which is supported by git command. 
+We can pass all types of arguments which is supported by git command.
 
 E.g. git `--branch` also accepts git `tags`
- 
+
      git:
         - name: my-app 
           clone: http://mygitrepo --branch development
 
 
-Using a secure git clone. 
+Using a secure git clone.
 
         git:
             - name: my-app
@@ -93,14 +93,14 @@ Using a secure git clone.
 
 #### Reusing Pipeline
 
-Re-usability is designed with simplicity within helium, it uses templating for reusability. 
-the template file can be kept again with the same codebase, or can be kept on remote host 
-or even another git repository. 
+Re-usability is designed with simplicity within helium, it uses templating for reusability.
+the template file can be kept again with the same codebase, or can be kept on remote host
+or even another git repository.
 
 #### Template and vars
-Template support variable substitution (`vars`), which could be defined at the `step` level or at the `task` level 
+Template support variable substitution (`vars`), which could be defined at the `step` level or at the `task` level
 
-> `step` level variable overrides `task` level variables 
+> `step` level variable overrides `task` level variables
 
     tasks:
         - name: build-task
@@ -115,7 +115,7 @@ Template support variable substitution (`vars`), which could be defined at the `
                 - name: sourceroot
                   value: my-app
 
-Meanwhile in the helium template file 
+Meanwhile in the helium template file
 
         helium-template:
             gradle-build:
@@ -123,7 +123,7 @@ Meanwhile in the helium template file
                 command: [ "sh", "-c" ]
                 args: ["cd /workspace/${sourceroot} && chmod a+x gradlew && ./gradlew clean build"]
 
-final output will be 
+final output will be
 
     tasks:
         - name: build-task
@@ -166,16 +166,60 @@ Template file
             args: ["echo ${myvar}"]
 
 
-and the output would be 
+and the output would be
 
     [TASK: build-task STEP: print-fname] Manish
     [TASK: build-task STEP: print-lname] Bansal
 
 
-### Finally a completed pipeline 
+### Finally a completed pipeline
 * [complete build and deploy pipeline!](testdata/complete-pipeline-example-01.yaml)
-  * building gradle based source code
-  * building and pushing the image using kaniko 
-  * deploying the image using helm  
+    * building gradle based source code
+    * building and pushing the image using kaniko
+    * deploying the image using helm
 * [helium template example](testdata/helium-template.yaml)
     
+
+#### Support for Kubernetes yaml tags.
+
+there is out of the box supports for all kubernetes tags including env, volumeMounts secrets
+
+    pipeline:  
+        version: helium/v1alpha1  
+        name: testpipeline
+        tasks:  
+          - name: simple-task
+            vars:
+              - name: greet
+                value: Hello
+            steps:  
+              - name: simple-step  
+                image: alpine:latest  
+                command: ["sh", "-c"]  
+                args: ["echo $DEMO_GREETING"]
+                env: 
+                - name: USER 
+                  value: Manish   
+                - name: DEMO_GREETING
+                  value: "${greet} $(USER)"
+                - name: DBPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: dbpassword
+                      key: password
+                volumeMounts:
+                - name: secret-volume
+                  mountPath: /etc/secret-volume
+            volumes:
+                - name: secret-volume
+                  secret:
+                    secretName: test-secret  
+
+
+and the output would be
+
+    [TASK: simple-task STEP: simple-step] Hello Manish
+
+In the above example we are using Environment vars, env refs, tasks vars, kubernetes volums and mounts and secrets
+
+
