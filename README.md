@@ -177,5 +177,5 @@ and the output would be
   * building gradle based source code
   * building and pushing the image using kaniko 
   * deploying the image using helm  
-* [helium template example](testdata/helium-tmeplate.yaml)
+* [helium template example](testdata/helium-template.yaml)
     
